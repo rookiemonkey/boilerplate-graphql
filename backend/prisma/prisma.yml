@@ -1,0 +1,7 @@
+# PROD DEPLOYMENT:
+# 1. prisma login
+# 2. prisma deploy -e <.env path relative to this yml file>
+
+endpoint: ${env:PRISMA_ENDPOINT}
+datamodel: datamodel.graphql
+secret: ${env:PRISMA_SECRET}
