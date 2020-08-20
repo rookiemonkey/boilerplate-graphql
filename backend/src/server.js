@@ -1,4 +1,4 @@
-import { GraphQLServer, PubSub } from 'graphql-yoga'
+import { GraphQLServer } from 'graphql-yoga'
 import { resolvers, fragmentReplacements } from './resolvers/_resolvers'
 import prisma from './prisma'
 
