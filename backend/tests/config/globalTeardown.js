@@ -1,5 +1,3 @@
-const globalTeardown = async () => {
+module.exports = async () => {
     await global.httpServer.close()
 }
-
-module.exports = globalTeardown 

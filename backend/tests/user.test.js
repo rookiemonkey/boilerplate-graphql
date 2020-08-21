@@ -1,43 +1,79 @@
-import 'cross-fetch/polyfill'
 import '@babel/polyfill'
-import ApolloBoost, { gql } from 'apollo-boost'
+import 'cross-fetch/polyfill'
+import prisma from '../src/prisma'
+import seedDatabase, { userOne } from './helpers/seedDatabase'
+import getClient from './helpers/getClient'
+import { createUser, getUsers, login, getProfile } from './helpers/operations'
 
-const client = new ApolloBoost({
-    uri: "http://localhost:3030"
-})
+const client = getClient()
+beforeEach(seedDatabase)
 
-describe('USER', () => {
-    test('This is my first test case', async () => {
-        const createUserPayload = gql`
-            mutation {
-                createUser(data:{
-                    name: "Test User 1"
-                    username: "testusername"
-                    email: "testemail@gmail.com"
-                    password: "testpassword"
-                    avatar: "test image url"
-                }) {
-                    token
-                    user {
-                        name
-                        username
-                        email
-                        password
-                        avatar
-                    }
-                }
+
+describe('User', () => {
+    test('Should signup a user', async () => {
+        const variables = {
+            data: {
+                name: 'Andrew',
+                email: 'andrew@example.com',
+                password: 'MyPass123'
             }
-        `
+        }
+        const response = await client.mutate({
+            mutation: createUser,
+            variables
+        })
 
-        const createdUser = await client.mutate({ mutation: createUserPayload })
-
+        const exists = await prisma.exists.User({ id: response.data.createUser.user.id })
+        expect(exists).toBe(true)
     })
 
-    test('This is my second test case', async () => {
 
+    test('Should not signup user with invalid password', async () => {
+        const variables = {
+            data: {
+                name: 'Andrew',
+                email: 'andrew@example.com',
+                password: 'pass'
+            }
+        }
+
+        await expect(
+            client.mutate({ mutation: createUser, variables })
+        ).rejects.toThrow()
     })
 
-    test('This is my third test case', async () => {
 
+    test('Should not login with bad credentials', async () => {
+        const variables = {
+            data: {
+                email: "jen@example.com",
+                password: "red098!@#$"
+            }
+        }
+
+        await expect(
+            client.mutate({ mutation: login, variables })
+        ).rejects.toThrow()
     })
+
+
+    test('Should expose public author profiles', async () => {
+        const response = await client.query({ query: getUsers })
+
+        expect(response.data.users.length).toBe(2)
+        expect(response.data.users[0].email).toBe(null)
+        expect(response.data.users[0].name).toBe('Jen')
+    })
+
+
+    test('Should expose user profile', async () => {
+        const client = getClient(userOne.jwt)
+        const { data } = await client.query({ query: getProfile })
+
+        expect(data.me.id).toBe(userOne.user.id)
+        expect(data.me.name).toBe(userOne.user.name)
+        expect(data.me.email).toBe(userOne.user.email)
+    })
+
+
 })
