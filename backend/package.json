@@ -11,10 +11,8 @@
     "getSchema": "get-graphql-schema http://localhost:4466/blogv2/dev --header Authorization='' > ./src/generated/prisma.graphql "
   },
   "jest": {
-    "globals": {
-      "globalSetup": "./tests/config/globalSetup.js",
-      "globalTeardown": "./tests/config/globalTeardown"
-    }
+    "globalSetup": "./tests/config/globalSetup",
+    "globalTeardown": "./tests/config/globalTeardown"
   },
   "author": "Kevin Basina",
   "license": "MIT",
@@ -26,6 +24,8 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.11.0",
     "@babel/preset-env": "^7.11.0",
     "@babel/register": "^7.10.5",
+    "apollo-boost": "^0.4.9",
+    "cross-fetch": "^3.0.5",
     "bcrypt": "^5.0.0",
     "graphql-cli": "^4.0.0",
     "graphql-yoga": "^1.18.3",
