@@ -5,17 +5,27 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "env-cmd -f ./config/dev.env nodemon src/index.js --ext js,graphql --exec babel-node",
     "heroku-postbuild": "babel src --out-dir dist --copy-files",
+    "dev": "env-cmd -f ./config/dev.env nodemon src/index.js --ext js,graphql --exec babel-node",
+    "test": "env-cmd -f ./config/test.env jest --watch",
     "getSchema": "get-graphql-schema http://localhost:4466/blogv2/dev --header Authorization='' > ./src/generated/prisma.graphql "
+  },
+  "jest": {
+    "globals": {
+      "globalSetup": "./tests/config/globalSetup.js",
+      "globalTeardown": "./tests/config/globalTeardown"
+    }
   },
   "author": "Kevin Basina",
   "license": "MIT",
   "dependencies": {
     "@babel/polyfill": "^7.10.4",
-    "babel-cli": "^6.26.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.11.1",
+    "@babel/node": "7.10.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.11.0",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/register": "^7.10.5",
     "bcrypt": "^5.0.0",
     "graphql-cli": "^4.0.0",
     "graphql-yoga": "^1.18.3",
@@ -25,6 +35,7 @@
   "devDependencies": {
     "env-cmd": "^10.1.0",
     "get-graphql-schema": "^2.1.2",
+    "jest": "^26.4.0",
     "nodemon": "^2.0.4"
   }
 }
